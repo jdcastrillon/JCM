@@ -332,7 +332,7 @@ public class Pojos extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        FolderPojos = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -413,7 +413,7 @@ public class Pojos extends javax.swing.JFrame {
 
         jLabel3.setText("Date Base");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, -1, -1));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 420, -1));
+        jPanel1.add(FolderPojos, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 420, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -445,9 +445,9 @@ public class Pojos extends javax.swing.JFrame {
         this.dispose();
         try {
             if (controladores.isSelected()) {
-                new Controladores(propiedade,this.c2, jTextField1.getText()).setVisible(true);
+                new Controladores(ListTable2,propiedade,this.c2, FolderPojos.getText()).setVisible(true);
             } else {
-                new CreacionJSM(ListTable2, controladores.isSelected(), propiedade, c, jTextField1.getText(), "", 3).setVisible(true);
+                new CreacionJCM(ListTable2, controladores.isSelected(), propiedade, c, FolderPojos.getText(), "", 3).setVisible(true);
             }
         } catch (IOException ex) {
             Logger.getLogger(Pojos.class.getName()).log(Level.SEVERE, null, ex);
@@ -504,6 +504,7 @@ public class Pojos extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField FolderPojos;
     private javax.swing.JComboBox<String> coneciones;
     private javax.swing.JCheckBox controladores;
     private javax.swing.JButton jButton1;
@@ -520,7 +521,6 @@ public class Pojos extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel mns;
     // End of variables declaration//GEN-END:variables
 }
