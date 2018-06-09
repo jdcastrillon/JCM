@@ -7,11 +7,13 @@ package view;
 
 import Modelo.Conecion;
 import Modelo.forenKeys;
-import coneciones.TestBD;
+import coneciones.GetConecion;
+import coneciones.poolConecciones;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,11 +30,12 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
     double rowcount;
     Thread Hilo1;
     Properties propiedade;
-    TestBD conecion;
     Conecion c;
     String folder;
     String folder2;
     int temp;
+    poolConecciones pool = new poolConecciones();
+    public Connection con;
 
     public CreacionJCM(ArrayList<String> tablas, boolean controladores, Properties propiedade, Conecion c, String Folder, String folder2, int temp) throws IOException, SQLException {
         initComponents();
@@ -48,13 +51,13 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
         this.Hilo1 = new Thread(this);
         this.boolControl = controladores;
         this.propiedade = propiedade;
-        this.conecion = new TestBD();
         this.c = c;
         this.folder = Folder;
         this.folder2 = folder2;
         this.temp = temp;
         System.out.println("folder : " + Folder);
         System.out.println("folder 2 : " + folder2);
+        pool = GetConecion.getControllerpool(propiedade);
         Hilo1.start();
     }
 
@@ -98,9 +101,9 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
     public void mapeoEntity() throws IOException, SQLException, ClassNotFoundException {
         try {
 
-            conecion.conectar(this.propiedade);
+            con = pool.dataSource.getConnection();
             ArrayList<forenKeys> listForenKey = new ArrayList();
-            listForenKey = forenKeys(conecion, 1);
+            listForenKey = forenKeys( 1);
             //        sqlServer conecion = sqlServer.getDbCon();
             //Swing
 //        String f = "src/JAJA";
@@ -259,7 +262,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
 
             int a = 1;
             int count = 0;
-            DatabaseMetaData metaDatos = conecion.getconecion().getMetaData();
+            DatabaseMetaData metaDatos = con.getMetaData();
             String v[] = {"TABLE"};
             ResultSet rs = metaDatos.getTables(null, null, null, v);
 
@@ -511,14 +514,14 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
         } catch (Exception ex) {
 
         } finally {
-            conecion.cerrarConexion();
+            con.close();
         }
 
     }
 
-    public ArrayList<forenKeys> forenKeys(TestBD conecion, int condicion) throws SQLException {
+    public ArrayList<forenKeys> forenKeys(int condicion) throws SQLException {
         ArrayList<forenKeys> listForenKey = new ArrayList();
-        DatabaseMetaData metaDatos = conecion.getconecion().getMetaData();
+        DatabaseMetaData metaDatos = con.getMetaData();
         String v[] = {"TABLE"};
         ResultSet rs = metaDatos.getTables(null, null, null, v);
         while (rs.next()) {
@@ -544,9 +547,8 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
 
     public void crearViewBasic() throws IOException, SQLException, ClassNotFoundException {
         try {
-            conecion.conectar(propiedade);
             ArrayList<forenKeys> listForenKey = new ArrayList();
-            listForenKey = forenKeys(conecion, 2);
+            listForenKey = forenKeys(2);
             //        sqlServer conecion = sqlServer.getDbCon();
             //Swing
 //        String f = "src/JAJA";
@@ -580,7 +582,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
             boolean r = false;
             boolean CrearTabla = false;
 
-            DatabaseMetaData metaDatos = conecion.getconecion().getMetaData();
+            DatabaseMetaData metaDatos = con.getMetaData();
             String v[] = {"TABLE"};
             ResultSet rs = metaDatos.getTables(null, null, null, v);
             while (rs.next()) {
@@ -880,7 +882,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
         } catch (Exception ex) {
 
         } finally {
-            conecion.cerrarConexion();
+            con.close();
         }
 
     }
@@ -891,13 +893,12 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
         String index = "";
         boolean CrearTabla = false;
         try {
-
-            conecion.conectar(propiedade);
+            con = pool.dataSource.getConnection();
 
             if (condicion == 1) {
 
                 String contenido = "";
-                DatabaseMetaData metaDatos = conecion.getconecion().getMetaData();
+                DatabaseMetaData metaDatos = con.getMetaData();
                 String v[] = {"TABLE"};
                 ResultSet rs = metaDatos.getTables(null, null, null, v);
                 while (rs.next()) {
@@ -962,7 +963,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
                 bw.close();
             } else if (condicion == 2) {
                 String contenido = "";
-                DatabaseMetaData metaDatos = conecion.getconecion().getMetaData();
+                DatabaseMetaData metaDatos = con.getMetaData();
                 String v[] = {"TABLE"};
                 ResultSet rs = metaDatos.getTables(null, null, null, v);
                 while (rs.next()) {
@@ -1045,7 +1046,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
                         + "      xmlns:ui=\"http://xmlns.jcp.org/jsf/facelets\">\n"
                         + "\n"
                         + "        <ui:composition template=\"/template.xhtml\">\n"
-                        + "            <ui:define name=\"title\">\n"                        
+                        + "            <ui:define name=\"title\">\n"
                         + "            </ui:define>\n"
                         + "             <ui:define name=\"body\">\n"
                         + "\n"
@@ -1061,16 +1062,16 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
         } catch (Exception ex) {
 
         } finally {
-            conecion.cerrarConexion();
+            con.close();
         }
 
     }
 
-    public void crearViewPrimefacesBootfaces() {
+    public void crearViewPrimefacesBootfaces() throws SQLException {
         try {
-            conecion.conectar(propiedade);
+            con = pool.dataSource.getConnection();
             ArrayList<forenKeys> listForenKey = new ArrayList();
-            listForenKey = forenKeys(conecion, 2);
+            listForenKey = forenKeys(2);
             //        sqlServer conecion = sqlServer.getDbCon();
             //Swing
 //        String f = "src/JAJA";
@@ -1103,7 +1104,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
             boolean r = false;
             boolean CrearTabla = false;
 
-            DatabaseMetaData metaDatos = conecion.getconecion().getMetaData();
+            DatabaseMetaData metaDatos = con.getMetaData();
             String v[] = {"TABLE"};
             ResultSet rs = metaDatos.getTables(null, null, null, v);
             while (rs.next()) {
@@ -1116,7 +1117,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
                 referencias = "";
 //                contenido = "";
                 CrearTabla = false;
-                System.out.println("buscamos tabla : " +tabla);
+                System.out.println("buscamos tabla : " + tabla);
                 for (String table : Listablas) {
                     if (table.trim().equalsIgnoreCase(tabla)) {
                         CrearTabla = true;
@@ -1412,7 +1413,7 @@ public class CreacionJCM extends javax.swing.JFrame implements Runnable {
         } catch (Exception ex) {
 
         } finally {
-            conecion.cerrarConexion();
+            con.close();
         }
     }
 

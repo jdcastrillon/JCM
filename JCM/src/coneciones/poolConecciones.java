@@ -18,6 +18,10 @@ public class poolConecciones {
     public DataSource dataSource;
     public CallableStatement cstmt;
 
+    public poolConecciones() {
+    }
+    
+
     public poolConecciones(BasicDataSource basicDataSource) {
         dataSource = basicDataSource;
 
@@ -112,4 +116,29 @@ public class poolConecciones {
 //        pool.probarConecion();
 
     }
+
+    public Connection getCon() {
+        return con;
+    }
+
+    public void setCon(Connection con) {
+        this.con = con;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public CallableStatement getCstmt() {
+        return cstmt;
+    }
+
+    public void setCstmt(CallableStatement cstmt) {
+        this.cstmt = cstmt;
+    }
+    
 }

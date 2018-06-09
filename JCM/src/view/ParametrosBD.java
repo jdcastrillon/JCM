@@ -7,7 +7,7 @@ package view;
 
 import Modelo.Conecion;
 import coneciones.GetConecion;
-import coneciones.TestBD;
+
 import coneciones.poolConecciones;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -186,7 +186,7 @@ public class ParametrosBD extends javax.swing.JFrame {
         }
         this.dispose();
         try {
-            new Pojos(p, conecion, pool).setVisible(true);
+            new Pojos(p, conecion).setVisible(true);
         } catch (IOException ex) {
             System.out.println("error : " + ex.toString());
         } catch (SQLException ex) {

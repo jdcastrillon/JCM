@@ -7,9 +7,10 @@ package view;
 
 import Modelo.forenKeys;
 import Modelo.Conecion;
-import coneciones.TestBD;
+import coneciones.GetConecion;
 import coneciones.poolConecciones;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,23 +33,30 @@ public class Pojos extends javax.swing.JFrame {
     ArrayList<String> ListTable2 = new ArrayList();
     ArrayList<forenKeys> listForenKey = new ArrayList();
     String tablas = "";
-    poolConecciones pool;
+    poolConecciones pool=new poolConecciones();
+    public Connection con;
 
-    public Pojos(Properties p, Conecion c, poolConecciones po) throws IOException, SQLException, ClassNotFoundException {
+    public Pojos(Properties p, Conecion c) throws IOException, SQLException, ClassNotFoundException {
         initComponents();
         this.setLocationRelativeTo(null);
         this.propiedade = p;
         this.c2 = c;
         coneciones.addItem(c.getNombre());
         mns.setText(".");
-        pool = po;
+        pool = GetConecion.getControllerpool(p);
         conectarPojos();
     }
 
     public void conectarPojos() throws SQLException, ClassNotFoundException {
         ListTable.clear();
         try {            
-            DatabaseMetaData metaDatos = pool.getconecion().getMetaData();
+            System.out.println("Holaaa");
+            if(pool==null){
+                System.out.println("poll null");
+            }
+            con = pool.dataSource.getConnection();
+            DatabaseMetaData metaDatos = con.getMetaData();
+            System.out.println("-----");
             String v[] = {"TABLE"};
             ResultSet rs = metaDatos.getTables(null, null, null, v);
             while (rs.next()) {
@@ -60,9 +68,9 @@ public class Pojos extends javax.swing.JFrame {
             }
             cargarlist();
         } catch (Exception ex) {
-
+            System.out.println("Error : " + ex.toString());
         } finally {
-            pool.getconecion().close();
+            con.close();
         }
 
     }
@@ -282,7 +290,7 @@ public class Pojos extends javax.swing.JFrame {
 
     public ArrayList<forenKeys> forenKeys(int condicion) throws SQLException {
         ArrayList<forenKeys> listForenKey = new ArrayList();
-        DatabaseMetaData metaDatos = pool.getconecion().getMetaData();
+        DatabaseMetaData metaDatos = con.getMetaData();
         String v[] = {"TABLE"};
         ResultSet rs = metaDatos.getTables(null, null, null, v);
         while (rs.next()) {

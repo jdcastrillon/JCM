@@ -7,8 +7,10 @@ package view;
 
 import Modelo.forenKeys;
 import Modelo.Conecion;
-import coneciones.TestBD;
+import coneciones.GetConecion;
+import coneciones.poolConecciones;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -27,22 +29,21 @@ public class Controladores extends javax.swing.JFrame {
     ArrayList<String> ListTable2 = new ArrayList();
     ArrayList<forenKeys> listForenKey = new ArrayList();
     String tablas = "";
-    TestBD conecion;
     String folder;
+    poolConecciones pool = new poolConecciones();
+    public Connection con;
 
-    public Controladores(ArrayList<String> tablas,Properties p, Conecion c,String Folder) throws IOException, SQLException, ClassNotFoundException {
+    public Controladores(ArrayList<String> tablas, Properties p, Conecion c, String Folder) throws IOException, SQLException, ClassNotFoundException {
         initComponents();
         this.setLocationRelativeTo(null);
         this.propiedade = p;
         coneciones.addItem(c.getNombre());
-        mns.setText(".");
-        conecion= new TestBD();
-        this.folder=Folder;
-        System.out.println("FOLDER de poojos : "+ Folder);
-        ListTable2=tablas;
+        mns.setText(".");        
+        this.folder = Folder;
+        System.out.println("FOLDER de poojos : " + Folder);
+        ListTable2 = tablas;
+        pool = GetConecion.getControllerpool(propiedade);
     }
-
-  
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -151,7 +152,7 @@ public class Controladores extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         this.dispose();
         try {
-            new CreacionJCM(ListTable2, true,propiedade,c,this.folder,jTextField1.getText(),coneciones1.getSelectedIndex()).setVisible(true);
+            new CreacionJCM(ListTable2, true, propiedade, c, this.folder, jTextField1.getText(), coneciones1.getSelectedIndex()).setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(Controladores.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
