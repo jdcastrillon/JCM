@@ -10,10 +10,12 @@ package Modelo;
  * @author ASUS_01
  */
 public class Conecion {
+
     private String nombre;
     private String drive;
     private String libreria;
     private String puerto;
+    private int opcion;
 
     public Conecion() {
     }
@@ -28,9 +30,7 @@ public class Conecion {
         this.drive = drive;
         this.libreria = libreria;
     }
-    
-    
-    
+
     public String getNombre() {
         return nombre;
     }
@@ -62,12 +62,19 @@ public class Conecion {
     public void setPuerto(String puerto) {
         this.puerto = puerto;
     }
-        
+
+    public int getOpcion() {
+        return opcion;
+    }
+
+    public void setOpcion(int opcion) {
+        this.opcion = opcion;
+    }
+    
 
     @Override
     public String toString() {
         return "Conecion{" + "nombre=" + nombre + ", drive=" + drive + '}';
     }
-    
-    
+
 }

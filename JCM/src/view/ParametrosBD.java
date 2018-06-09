@@ -6,7 +6,9 @@
 package view;
 
 import Modelo.Conecion;
+import coneciones.GetConecion;
 import coneciones.TestBD;
+import coneciones.poolConecciones;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class ParametrosBD extends javax.swing.JFrame {
     Conecion conecion;
     Properties p = new Properties();
     boolean validacion;
-    TestBD conecionBD;
+    poolConecciones pool;
 
     public ParametrosBD(Conecion c) throws IOException {
         initComponents();
@@ -39,10 +41,9 @@ public class ParametrosBD extends javax.swing.JFrame {
         validacion = false;
         Host.setText("localhost");
         puerto.setText(conecion.getPuerto());
-        BD.setText("compraventa");
-        user.setText("postgres");
-        pass.setText("Juan");
-        conecionBD = new TestBD();
+        BD.setText("");
+        user.setText("");
+        pass.setText("");
     }
 
     /**
@@ -185,9 +186,7 @@ public class ParametrosBD extends javax.swing.JFrame {
         }
         this.dispose();
         try {
-            conecionBD.conectar(p);
-            System.out.println("----");
-            new Pojos(p, conecion).setVisible(true);
+            new Pojos(p, conecion, pool).setVisible(true);
         } catch (IOException ex) {
             System.out.println("error : " + ex.toString());
         } catch (SQLException ex) {
@@ -213,7 +212,7 @@ public class ParametrosBD extends javax.swing.JFrame {
         try {
 
             if (Host.getText().length() == 0 || puerto.getText().length() == 0 || BD.getText().length() == 0 || BD.getText().length() == 0
-                    || user.getText().length() == 0 || pass.getText().length() == 0) {
+                    || user.getText().length() == 0) {
                 System.out.println("deben estar todos llenos");
                 mns.setText("Llenar todos los campos");
             } else {
@@ -226,9 +225,9 @@ public class ParametrosBD extends javax.swing.JFrame {
                 p.put("Puerto", puerto.getText());
                 p.put("NameBD", BD.getText());
                 p.put("driver", conecion.getDrive());
-                boolean a = conecionBD.conectar(p);
-                if (a) {
-                    
+
+                pool = GetConecion.getControllerpool(p);
+                if (pool != null) {
                     mns.setText("Conecto bien");
                     validacion = true;
                 } else {

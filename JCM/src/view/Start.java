@@ -88,14 +88,20 @@ public class Start extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.dispose();
         try {
-            Conecion conecion=new Conecion();
-            if (BD.getSelectedIndex()==0) {
+            Conecion conecion = new Conecion();
+            if (BD.getSelectedIndex() == 0) {
                 conecion.setNombre("postgresql");
                 conecion.setPuerto("5432");
+                conecion.setDrive("org.postgresql.Driver");                
+
+            } else if (BD.getSelectedIndex() == 1) {
+                conecion.setNombre("Mysql");
+                conecion.setPuerto("3306");
                 conecion.setDrive("org.postgresql.Driver");
+                
             }
             System.out.println("----");
-             new ParametrosBD(conecion).setVisible(true);
+            new ParametrosBD(conecion).setVisible(true);
         } catch (IOException ex) {
             System.out.println("error : " + ex.toString());
         }
@@ -134,7 +140,7 @@ public class Start extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-              WebLookAndFeel.install();
+            WebLookAndFeel.install();
             new Start().setVisible(true);
         });
     }
